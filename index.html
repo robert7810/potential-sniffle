@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Player with HLS</title>
+  <link rel="stylesheet" href="https://vidsrc.rip/static/css/styles.min.css">
+</head>
+<body>
+  <div id="video-container">
+    <video id="video-player" controls autoplay></video>
+  </div>
+
+  <script src="https://vidsrc.rip/static/js/player.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('video-player');
+      const videoSrc = 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8';
+
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS support (Safari, some iOS devices)
+        video.src = videoSrc;
+      } else if (Hls.isSupported()) {
+        // HLS.js fallback for other browsers
+        const hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play();
+        });
+      } else {
+        console.error("HLS is not supported in this browser.");
+      }
+    });
+  </script>
+</body>
+</html>
